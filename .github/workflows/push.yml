@@ -1,0 +1,22 @@
+name: tidbyt-push
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pixlet
+        run: |
+          curl -sL https://github.com/tidbyt/pixlet/releases/download/v0.34.0/pixlet_0.34.0_linux_amd64.tar.gz | tar xz
+      - name: Render and push
+        run: |
+          ./pixlet render hc_status.star api_key="$HC_API_KEY"
+          ./pixlet push --api-token "$TIDBYT_TOKEN" --installation-id hcstatus "$TIDBYT_DEVICE_ID" hc_status.webp
+        env:
+          HC_API_KEY: ${{ secrets.HC_API_KEY }}
+          TIDBYT_TOKEN: ${{ secrets.TIDBYT_TOKEN }}
+          TIDBYT_DEVICE_ID: ${{ secrets.TIDBYT_DEVICE_ID }}
