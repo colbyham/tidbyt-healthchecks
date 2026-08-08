@@ -1,7 +1,9 @@
 name: tidbyt-push
 on:
   schedule:
-    - cron: "*/10 * * * *"
+    # ponytail: UTC crons, ~1h DST drift is fine for a glance display
+    - cron: "*/15 0-6 * * *" # ~5pm-11pm Pacific: every 15 min
+    - cron: "0 7-23 * * *" # rest of day: hourly heartbeat so it never goes stale-green
   workflow_dispatch:
 
 jobs:
